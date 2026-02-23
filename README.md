@@ -1,4 +1,8 @@
-![ansi compositor](./docs/logo.png)
+<div align="center">
+    <h1>
+        <img src="./docs/logo.png"/>
+    </h1>
+</div>
 
 Compose ANSI/Neotex files from a YAML description. ansi-compositor relies on
 splitans for parsing/tokenizing ANSI or Neotex sources and exporting the final
