@@ -29,8 +29,8 @@ type CLI struct {
 	// Inline output
 	Inline bool `short:"I" help:"Output on single line"`
 
-	// Verbose mode
-	Verbose bool `short:"v" help:"Verbose output"`
+	// VGA colors
+	VGAColors bool `short:"v" help:"Use VGA colors (splitans palette)"`
 
 	// Version flag
 	Version kong.VersionFlag `short:"V" help:"Show version"`
@@ -69,13 +69,8 @@ func run(cli *CLI) error {
 	if cli.Inline {
 		cfg.Output.Inline = true
 	}
-
-	if cli.Verbose {
-		fmt.Fprintf(os.Stderr, "Workspace: %dx%d\n", cfg.Term.Width, cfg.Term.Height)
-		fmt.Fprintf(os.Stderr, "Layers: %d\n", len(cfg.Layers))
-		for i, layer := range cfg.Layers {
-			fmt.Fprintf(os.Stderr, "  [%d] %s at (%d,%d)\n", i, layer.Name, layer.X+1, layer.Y+1)
-		}
+	if cli.VGAColors {
+		cfg.Term.UseVGAColors = true
 	}
 
 	// Create compositor and compose
@@ -94,9 +89,6 @@ func run(cli *CLI) error {
 	if cfg.Output.File != "" {
 		if err := os.WriteFile(cfg.Output.File, []byte(output), 0644); err != nil {
 			return fmt.Errorf("write output: %w", err)
-		}
-		if cli.Verbose {
-			fmt.Fprintf(os.Stderr, "Written to: %s\n", cfg.Output.File)
 		}
 	} else {
 		fmt.Print(output)

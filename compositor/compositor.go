@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sort"
 	"strings"
 	"time"
 
@@ -45,15 +44,8 @@ func (c *Compositor) Compose() error {
 		}
 	}
 
-	// Sort layers by ZIndex
-	layers := make([]config.Layer, len(c.config.Layers))
-	copy(layers, c.config.Layers)
-	sort.SliceStable(layers, func(i, j int) bool {
-		return layers[i].ZIndex < layers[j].ZIndex
-	})
-
 	// Process each layer
-	for _, layer := range layers {
+	for _, layer := range c.config.Layers {
 		if !layer.IsEnabled() {
 			continue
 		}
@@ -144,6 +136,24 @@ func parseNeotexSGR(codes string) *splitans.SGR {
 	return sgr
 }
 
+func parseNeotexLineCount(data []byte) int {
+	for i := 0; i+2 < len(data); i++ {
+		if data[i] != '!' || data[i+1] != 'N' || data[i+2] != 'L' {
+			continue
+		}
+		value := 0
+		j := i + 3
+		for j < len(data) && data[j] >= '0' && data[j] <= '9' {
+			value = value*10 + int(data[j]-'0')
+			j++
+		}
+		if j > i+3 {
+			return value
+		}
+	}
+	return 0
+}
+
 // processLayer loads and pastes a single layer onto the workspace.
 func (c *Compositor) processLayer(layer *config.Layer) error {
 	// Get content data
@@ -169,11 +179,19 @@ func (c *Compositor) processLayer(layer *config.Layer) error {
 
 	// Tokenize
 	var tokens []splitans.Token
+	neotexWidth := 0
+	neotexHeight := 0
 
 	switch format {
 	case "neotex":
-		_, tok := splitans.NewNeotexTokenizer(data, c.config.Term.Width)
+		inputWidth := c.config.Term.Width
+		if layer.Width > 0 {
+			inputWidth = layer.Width
+		}
+		parsedWidth, tok := splitans.NewNeotexTokenizer(data, inputWidth)
 		tokens = tok.Tokenize()
+		neotexWidth = parsedWidth
+		neotexHeight = parseNeotexLineCount(data)
 	case "ansi":
 		tok := splitans.NewANSITokenizer(data)
 		tokens = tok.Tokenize()
@@ -194,19 +212,35 @@ func (c *Compositor) processLayer(layer *config.Layer) error {
 		vtHeight = c.config.Term.Height - layer.Y
 	}
 
-	// Create layer VT and apply tokens
-	layerVT := splitans.NewVirtualTerminal(vtWidth, vtHeight, c.config.Term.Encoding, c.config.Term.UseVGAColors)
-	if err := layerVT.ApplyTokens(tokens); err != nil {
+	contentWidth := vtWidth
+	contentHeight := vtHeight
+	if format == "neotex" {
+		if neotexWidth > 0 {
+			contentWidth = neotexWidth
+		}
+		if neotexHeight > 0 {
+			contentHeight = neotexHeight
+		}
+	}
+	if contentWidth > vtWidth {
+		contentWidth = vtWidth
+	}
+	if contentHeight > vtHeight {
+		contentHeight = vtHeight
+	}
+
+	// Create content VT and apply tokens
+	contentVT := splitans.NewVirtualTerminal(contentWidth, contentHeight, c.config.Term.Encoding, c.config.Term.UseVGAColors)
+	if err := contentVT.ApplyTokens(tokens); err != nil {
 		return fmt.Errorf("apply tokens: %w", err)
 	}
 
-	// Apply alignment by moving content within the VT (before crop)
+	// Create layer VT and apply alignment by moving content within it (before crop)
+	layerVT := splitans.NewVirtualTerminal(vtWidth, vtHeight, c.config.Term.Encoding, c.config.Term.UseVGAColors)
+	offsetX, offsetY := 0, 0
 	if layer.AlignH != "" || layer.AlignV != "" {
-		bounds := layerVT.GetContentBounds()
+		bounds := contentVT.GetContentBounds()
 		if !bounds.Empty {
-			// Calculate alignment offsets
-			offsetX, offsetY := 0, 0
-
 			switch layer.AlignH {
 			case "center":
 				offsetX = (vtWidth-bounds.Width)/2 - bounds.MinX
@@ -222,14 +256,11 @@ func (c *Compositor) processLayer(layer *config.Layer) error {
 				offsetY = vtHeight - bounds.Height - bounds.MinY
 				// "top" or "" = no offset
 			}
-
-			// Create new VT and paste content at aligned position
-			if offsetX != 0 || offsetY != 0 {
-				alignedVT := splitans.NewVirtualTerminal(vtWidth, vtHeight, c.config.Term.Encoding, c.config.Term.UseVGAColors)
-				alignedVT.Paste(layerVT, offsetX, offsetY)
-				layerVT = alignedVT
-			}
 		}
+	}
+
+	if err := layerVT.Paste(contentVT, offsetX, offsetY); err != nil {
+		return fmt.Errorf("paste layer content: %w", err)
 	}
 
 	// Apply crop if specified

@@ -96,9 +96,6 @@ type Layer struct {
 
 	// Enabled allows disabling a layer without removing it
 	Enabled *bool `yaml:"enabled,omitempty"`
-
-	// ZIndex for layer ordering (higher = on top, default 0)
-	ZIndex int `yaml:"zIndex,omitempty"`
 }
 
 // Output defines how to export the final composition.
