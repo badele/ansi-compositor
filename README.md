@@ -57,28 +57,66 @@ sauce:
   iceColors: true
 ```
 
-## Complete example
+## Example
+
+A sample `ansi-compositor` result
+
+![example.png](./docs/example.png)
+
+For more information about this example, see the files in [./docs](./docs).
+
+### Complete example
 
 ```yaml
+term:
+  width: 180
+  height: 180
+  encoding: utf8
+
 defaults:
-  inputFormat: neotex
+  inputFormat: ansi
   inputEncoding: utf8
 
-term:
-  width: 80
-  height: 25
+output:
+  format: neotex
+
 layers:
-  - name: base
+  - name: logo
     x: 1
     y: 1
-    file: art.neo
-output:
-  format: ansi
-sauce:
-  title: "My Art"
-  author: "Bruno Adele"
-  group: "Demo"
-  date: "20250208"
-  font: "80x25"
-  iceColors: true
+    alignH: center
+    # cmd: curl 'https://codef-ansi-logo-maker-api.santo.fr/api.php?text=ansi%20compositor&font=78&spacing=2&spacesize=5&vary=2'
+    file: logo.neo
+    inputFormat: neotex
+  - name: slogan
+    x: 1
+    y: 22
+    width: 180
+    height: 1
+    alignH: center
+    content: "—————————---- Compose, color, and craft ANSI art cleanly ----—————————"
+  - name: weather-title
+    x: 3
+    y: 26
+    alignH: center
+    cmd: bit -fit-scales 0.5,1,2,4  -fit-height 3 -fit-priority height -fit-limit 1 "WEATHER EXAMPLE"
+  - name: weather
+    x: 1
+    y: 30
+    alignH: center
+    cmd: >-
+      sh -c 'set -euo pipefail; curl --fail --max-time 1 -o /tmp/weather.ansi wttr.in; splitans -W 125 /tmp/weather.ansi > docs/weather.neo; splitans -f neotex -F ansi docs/weather.neo'
+      || { [ -f docs/weather.neo ] && splitans docs/weather.neo -f neotex -F ansi || printf "[weather unavailable]\n"; }
+  - name: ratesx-title
+    x: 1
+    y: 68
+    alignH: center
+    cmd: bit -fit-scales 0.5,1,2,4  -fit-height 5 -fit-priority height -fit-limit 1  "RATE SX EXAMPLE"
+  - name: ratesx
+    x: 1
+    y: 74
+    alignH: center
+    cmd: >-
+      sh -c 'set -euo pipefail; curl --fail --max-time 1 -o /tmp/ratesx.ansi https://eur.rate.sx/; splitans -W 104 /tmp/ratesx.ansi > docs/ratesx.neo; splitans -f neotex -F ansi docs/ratesx.neo'
+      || { [ -f docs/ratesx.neo ] && splitans docs/ratesx.neo -f neotex -F ansi || printf "[rates unavailable]\n"; }
 ```
