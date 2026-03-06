@@ -188,7 +188,10 @@ func (c *Compositor) processLayer(layer *config.Layer) error {
 		if layer.Width > 0 {
 			inputWidth = layer.Width
 		}
-		parsedWidth, tok := splitans.NewNeotexTokenizer(data, inputWidth)
+		parsedWidth, tok, err := splitans.NewNeotexTokenizer(data, inputWidth, false)
+		if err != nil {
+			return fmt.Errorf("neotex parse error: %w", err)
+		}
 		tokens = tok.Tokenize()
 		neotexWidth = parsedWidth
 		neotexHeight = parseNeotexLineCount(data)
@@ -363,7 +366,11 @@ func (c *Compositor) Export() (string, error) {
 		if output.Inline {
 			ansiOut = c.workspace.ExportFlattenedANSIInline()
 		} else {
-			ansiOut = c.workspace.ExportFlattenedANSI()
+			if output.KeepTrailingLines {
+				ansiOut = c.workspace.ExportFlattenedANSIWithTrailing()
+			} else {
+				ansiOut = c.workspace.ExportFlattenedANSI()
+			}
 		}
 
 		if sauce == nil {
@@ -398,7 +405,7 @@ func (c *Compositor) Export() (string, error) {
 		if output.Inline {
 			return c.workspace.ExportPlainTextInline(), nil
 		}
-		return c.workspace.ExportPlainText(), nil
+		return c.workspace.ExportPlainText(output.KeepTrailingLines), nil
 
 	default:
 		return "", fmt.Errorf("unknown output format: %s", output.Format)

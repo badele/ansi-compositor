@@ -109,6 +109,9 @@ type Output struct {
 	// Inline outputs everything on a single line
 	Inline bool `yaml:"inline,omitempty"`
 
+	// KeepTrailingLines preserves trailing empty lines in ansi/neotex output
+	KeepTrailingLines bool `yaml:"keepTrailingLines,omitempty"`
+
 	// File to write output (stdout if not specified)
 	File string `yaml:"file,omitempty"`
 }
