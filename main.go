@@ -29,6 +29,9 @@ type CLI struct {
 	// Inline output
 	Inline bool `short:"I" help:"Output on single line"`
 
+	// Keep trailing empty lines
+	KeepTrailingLines bool `short:"K" help:"Preserve trailing empty lines in ansi/neotex output"`
+
 	// VGA colors
 	VGAColors bool `short:"v" help:"Use VGA colors (splitans palette)"`
 
@@ -68,6 +71,9 @@ func run(cli *CLI) error {
 	}
 	if cli.Inline {
 		cfg.Output.Inline = true
+	}
+	if cli.KeepTrailingLines {
+		cfg.Output.KeepTrailingLines = true
 	}
 	if cli.VGAColors {
 		cfg.Term.UseVGAColors = true

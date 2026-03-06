@@ -15,8 +15,9 @@ ansi-compositor path/to/config.yaml
 ```
 
 CLI options: `-o` (output file), `-F` (format: ansi|neotex|plaintext), `-I`
-(inline), `-v` (VGA colors), `-V` (version). These override `output.file`,
-`output.format`, `output.inline`, and `term.vgaColors` from the YAML. SAUCE is
+(inline), `-K` (keep trailing empty lines), `-v` (VGA colors), `-V` (version).
+These override `output.file`, `output.format`, `output.inline`,
+`output.keepTrailingLines`, and `term.vgaColors` from the YAML. SAUCE is
 controlled only via YAML.
 
 ## Configuration
@@ -31,8 +32,9 @@ Key YAML fields:
 - `layers[]`: each layer has `x`, `y` (1-indexed) and exactly one source among
   `file` | `cmd` | `content`; `cmd` can be a shell string or a list of args.
   Alignment options: `alignH`, `alignV`, `crop`.
-- `output.format`: ansi|neotex|plaintext; `output.inline`: bool; `output.file`:
-  path.
+- `output.format`: ansi|neotex|plaintext; `output.inline`: bool;
+  `output.keepTrailingLines`: preserve trailing empty lines (ansi/neotex);
+  `output.file`: path.
 - `sauce`: optional block (see below).
 
 ## SAUCE via YAML
