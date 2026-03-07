@@ -3,6 +3,7 @@ package config
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -51,6 +52,12 @@ type LayerDefaults struct {
 
 	// InputEncoding: utf8, cp437, cp850, iso-8859-1
 	InputEncoding string `yaml:"inputEncoding,omitempty"`
+
+	// BoxError: none, rectangle, fill
+	BoxError string `yaml:"boxError,omitempty"`
+
+	// BoxErrorPattern defines the fill pattern for boxError=fill
+	BoxErrorPattern string `yaml:"boxErrorPattern,omitempty"`
 }
 
 // Layer defines a single content layer to be composited.
@@ -74,6 +81,12 @@ type Layer struct {
 	// Command to execute (stdout will be captured)
 	// Can be a string or list of strings
 	Cmd interface{} `yaml:"cmd,omitempty"`
+
+	// BoxError draws a box if cmd fails (none, rectangle, fill
+	BoxError string `yaml:"boxError,omitempty"`
+
+	// BoxErrorPattern defines the fill pattern for boxError=fill
+	BoxErrorPattern string `yaml:"boxErrorPattern,omitempty"`
 
 	// Inline content (useful for small text)
 	Content string `yaml:"content,omitempty"`
@@ -180,6 +193,42 @@ func (l *Layer) GetInputEncoding(defaults *LayerDefaults) string {
 		return defaults.InputEncoding
 	}
 	return "utf8"
+}
+
+// GetBoxError returns the boxerror mode with fallback to defaults.
+func (l *Layer) GetBoxError(defaults *LayerDefaults) string {
+	if l.BoxError != "" {
+		return normalizeBoxError(l.BoxError)
+	}
+	if defaults != nil && defaults.BoxError != "" {
+		return normalizeBoxError(defaults.BoxError)
+	}
+	return "none"
+}
+
+// GetBoxErrorPattern returns the pattern used for boxError=fill.
+func (l *Layer) GetBoxErrorPattern(defaults *LayerDefaults) string {
+	if l.BoxErrorPattern != "" {
+		return l.BoxErrorPattern
+	}
+	if defaults != nil && defaults.BoxErrorPattern != "" {
+		return defaults.BoxErrorPattern
+	}
+	return ""
+}
+
+func normalizeBoxError(value string) string {
+	normalized := strings.ToLower(strings.TrimSpace(value))
+	return normalized
+}
+
+func isValidBoxError(value string) bool {
+	switch value {
+	case "none", "rectangle", "fill":
+		return true
+	default:
+		return false
+	}
 }
 
 // Validate checks a sauce configuration when enabled or unspecified (default enabled).
