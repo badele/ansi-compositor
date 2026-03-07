@@ -1,0 +1,34 @@
+term:
+  width: 80
+  height: 180
+  encoding: utf8
+
+defaults:
+  inputFormat: ansi
+  inputEncoding: utf8
+  boxError: fill
+output:
+  format: neotex
+
+layers:
+  - name: ballot-vote
+    x: 1
+    y: 1
+    alignH: center
+    file: ballot-vote.neo
+    inputFormat: neotex
+  - name: proteston
+    x: 3
+    y: 36
+    alignH: center
+    cmd: bit -fit-scales -1,0,1,2  -fit-width 76 -fit-priority width -fit-limit 1 -font glispbold "PROTESTONS"
+  - name: avec-nos
+    x: 3
+    y: 43
+    alignH: center
+    cmd: bit -fit-scales -1,0,1,2  -fit-width 76 -fit-priority width -fit-limit 1 -font glispbold "AVEC NOS"
+  - name: billets
+    x: 3
+    y: 50
+    alignH: center
+    cmd: bit -fit-scales -1,0,1,2  -fit-width 76 -fit-priority width -fit-limit 1 -font glispbold "BILLETS"
