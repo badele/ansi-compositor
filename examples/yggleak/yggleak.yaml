@@ -1,0 +1,39 @@
+term:
+  width: 120
+  height: 76
+  encoding: utf8
+
+defaults:
+  inputFormat: ansi
+  inputEncoding: utf8
+
+output:
+  format: neotex
+  keepTrailingLines: true
+
+layers:
+  - name: yggleak
+    x: 1
+    y: 6
+    alignH: center
+    cmd: bit -color 32 -fit-scales -1,0,1,2 -fit-width 120 -fit-priority width -fit-limit 1 -font edges "yggleak"
+  - name: the
+    x: 1
+    y: 36
+    alignH: center
+    cmd: bit -scale -1 -font boldpixels "the"
+  - name: cron
+    x: 1
+    y: 43
+    alignH: center
+    cmd: bit -color 36 -fit-scales -1,0,1,2  -fit-width 102 -fit-priority width -fit-limit 1 -font boldpixels "cron"
+  - name: is not dead
+    x: 1
+    y: 59
+    alignH: center
+    cmd: bit -scale -1 -font boldpixels "is not"
+  - name: dead
+    x: 1
+    y: 66
+    alignH: center
+    cmd: bit -scale -1 -font boldpixels "dead !"

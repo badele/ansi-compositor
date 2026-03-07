@@ -1,0 +1,50 @@
+# ansi-compositor docs/example.yaml | splitans -f neotex -F neotex > docs/example.neo && splitans -f neotex -F ansi -v docs/example.neo
+term:
+  width: 180
+  height: 180
+  encoding: utf8
+
+defaults:
+  inputFormat: ansi
+  inputEncoding: utf8
+  boxError: fill
+  boxErrorPattern: "  / __ \\ \\__/\n / /  \\ \\____/\n \\ \\__/ / __ \\\n  \\____/ /  \\"
+output:
+  format: neotex
+
+layers:
+  - name: logo
+    x: 1
+    y: 1
+    alignH: center
+    # cmd: curl 'https://codef-ansi-logo-maker-api.santo.fr/api.php?text=ansi%20compositor&font=78&spacing=2&spacesize=5&vary=2'
+    file: logo.neo
+    inputFormat: neotex
+  - name: slogan
+    x: 1
+    y: 22
+    width: 180
+    height: 1
+    alignH: center
+    content: "—————————---- Compose, color, and craft ANSI art cleanly ----—————————"
+  - name: weather-title
+    x: 3
+    y: 26
+    alignH: center
+    cmd: bit -font 8bitfortress -fit-scales -1,0,1,2  -fit-height 3 -fit-priority height -fit-limit 1 "WEATHER EXAMPLE"
+  - name: weather
+    x: 1
+    y: 30
+    height: 39
+    alignH: center
+    cmd: sh -c 'set -euo pipefail; curl --fail -s --max-time 5 wttr.in'
+  - name: ratesx-title
+    x: 1
+    y: 70
+    alignH: center
+    cmd: bit -font aqui -fit-scales -1,0,1,2  -fit-height 5 -fit-priority height -fit-limit 1 "RATE SX EXAMPLE"
+  - name: ratesx
+    x: 1
+    y: 76
+    alignH: center
+    cmd: sh -c 'set -euo pipefail; curl --fail -s --max-time 2 https://eur.rate.sx/'

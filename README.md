@@ -97,7 +97,7 @@ A sample `ansi-compositor` result
 
 ![example.png](./docs/example.png)
 
-For more information about this example, see the files in [./docs](./docs).
+For more examples see the [./examples](./examples/) folder
 
 ### Complete example
 
