@@ -8,6 +8,11 @@ import (
 	"github.com/badele/splitans/pkg/splitans"
 )
 
+const defaultBoxErrorPattern = `  / __ \ \__/
+ / /  \ \____/
+ \ \__/ / __ \
+  \____/ /  \`
+
 func (c *Compositor) renderErrorBox(layer *config.Layer, boxError string) error {
 	if boxError == "" || boxError == "none" {
 		return nil
@@ -30,7 +35,7 @@ func (c *Compositor) renderErrorBox(layer *config.Layer, boxError string) error 
 	case "fill":
 		pattern := layer.GetBoxErrorPattern(c.config.Defaults)
 		if pattern == "" {
-			pattern = "#"
+			pattern = defaultBoxErrorPattern
 		}
 		lines = drawBoxFill(width, height, label, pattern)
 	default:
