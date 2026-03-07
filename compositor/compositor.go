@@ -3,6 +3,7 @@ package compositor
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -18,6 +19,22 @@ import (
 type Compositor struct {
 	config    *config.Config
 	workspace *splitans.VirtualTerminal
+}
+
+type commandError struct {
+	Err    error
+	Stderr string
+}
+
+func (e *commandError) Error() string {
+	if strings.TrimSpace(e.Stderr) == "" {
+		return fmt.Sprintf("command failed: %v", e.Err)
+	}
+	return fmt.Sprintf("command failed: %v\nstderr: %s", e.Err, strings.TrimSpace(e.Stderr))
+}
+
+func (e *commandError) Unwrap() error {
+	return e.Err
 }
 
 // New creates a new Compositor from a configuration.
@@ -159,6 +176,14 @@ func (c *Compositor) processLayer(layer *config.Layer) error {
 	// Get content data
 	data, err := c.getLayerContent(layer)
 	if err != nil {
+		var cmdErr *commandError
+		boxError := layer.GetBoxError(c.config.Defaults)
+		if errors.As(err, &cmdErr) && boxError != "none" {
+			if err := c.renderErrorBox(layer, boxError); err != nil {
+				return err
+			}
+			return nil
+		}
 		return err
 	}
 
@@ -307,7 +332,7 @@ func (c *Compositor) getLayerContent(layer *config.Layer) ([]byte, error) {
 		command.Stderr = &stderr
 
 		if err := command.Run(); err != nil {
-			return nil, fmt.Errorf("command failed: %w\nstderr: %s", err, stderr.String())
+			return nil, &commandError{Err: err, Stderr: stderr.String()}
 		}
 
 		return stdout.Bytes(), nil

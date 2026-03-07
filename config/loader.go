@@ -74,8 +74,15 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("term.height must be positive")
 	}
 
+	if c.Defaults != nil && c.Defaults.BoxError != "" {
+		boxError := normalizeBoxError(c.Defaults.BoxError)
+		if !isValidBoxError(boxError) {
+			return fmt.Errorf("defaults.boxError must be none, rectangle, or fill")
+		}
+	}
+
 	for i, layer := range c.Layers {
-		if err := layer.Validate(i); err != nil {
+		if err := layer.Validate(i, c.Defaults); err != nil {
 			return err
 		}
 	}
@@ -90,7 +97,7 @@ func (c *Config) Validate() error {
 }
 
 // Validate checks a layer configuration.
-func (l *Layer) Validate(index int) error {
+func (l *Layer) Validate(index int, defaults *LayerDefaults) error {
 	name := l.Name
 	if name == "" {
 		name = fmt.Sprintf("layer[%d]", index)
@@ -137,6 +144,21 @@ func (l *Layer) Validate(index int) error {
 	}
 	if l.AlignV != "" && l.AlignV != "top" && l.AlignV != "middle" && l.AlignV != "bottom" {
 		return fmt.Errorf("%s: alignV must be top, middle, or bottom", name)
+	}
+
+	if l.BoxError != "" {
+		boxError := normalizeBoxError(l.BoxError)
+		if !isValidBoxError(boxError) {
+			return fmt.Errorf("%s: boxError must be none, rectangle, or fill", name)
+		}
+	}
+	if l.Cmd != nil && l.GetBoxError(defaults) != "none" {
+		if l.Width > 0 && l.Width < 3 {
+			return fmt.Errorf("%s: boxError requires width >= 3", name)
+		}
+		if l.Height > 0 && l.Height < 3 {
+			return fmt.Errorf("%s: boxError requires height >= 3", name)
+		}
 	}
 
 	return nil
