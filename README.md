@@ -95,7 +95,7 @@ sauce:
 
 A sample `ansi-compositor` result
 
-![example.png](./docs/example.png)
+![commands](./examples/commands/commands.png)
 
 For more examples see the [./examples](./examples/) folder
 

@@ -47,4 +47,4 @@ layers:
     x: 1
     y: 76
     alignH: center
-    cmd: sh -c 'set -euo pipefail; curl --fail -s --max-time 2 https://eur.rate.sx/'
+    cmd: sh -c 'set -euo pipefail; curl --fail -s --max-time 5 https://eur.rate.sx/'
