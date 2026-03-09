@@ -1,4 +1,12 @@
-## generate
+# commands
+
+```bash
+ansi-compositor commands.yaml -F ansi
+```
+
+![commands](./commands.png)
+
+## logo generation
 
 ```bash
 nix shell github:badele/splitans nixpkgs#ansilove
@@ -8,6 +16,8 @@ splitans -W 120 logo.ans > logo.neo
 splitans -f neotex -E cp437 -F ansi -S logo.neo > logo.ans
 ansilove -c 120 -o logo.png logo.ans
 ```
+
+![logo](./logo.png)
 
 ## Source
 

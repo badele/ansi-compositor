@@ -15,7 +15,7 @@ layers:
     x: 1
     y: 1
     alignH: center
-    file: ballot-vote.neo
+    file: res-ballot-vote.neo
     inputFormat: neotex
   - name: proteston
     x: 3
