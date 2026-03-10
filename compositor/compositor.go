@@ -408,9 +408,12 @@ func (c *Compositor) Export() (string, error) {
 	case "neotex":
 		var text, sequences string
 		if output.Inline {
-			text, sequences = splitans.ExportToInlineNeotex(c.workspace)
+			text, sequences, err = splitans.ExportToInlineNeotex(c.workspace)
 		} else {
-			text, sequences = splitans.ExportToNeotex(c.workspace)
+			text, sequences, err = splitans.ExportToNeotex(c.workspace)
+		}
+		if err != nil {
+			return "", err
 		}
 
 		if sauce == nil {
