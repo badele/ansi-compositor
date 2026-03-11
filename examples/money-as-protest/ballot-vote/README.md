@@ -1,11 +1,23 @@
-# ballot-vote
+# ballot vote with money
+
+Create ANSI version of this poster https://github.com/badele/money-as-protest
+
+## French
 
 ```bash
-ansi-compositor ballot-vote.yaml -F ansi | splitans -K -N 55 | sed 's/FFFFFFF/Fw/g' | sed 's/Bk/BEE1B24/g'| sed 's/R0/BEE1B24/g' | splitans -f neotex -F ansi
+ansi-compositor FR-ballot-vote.yaml | sed 's/Bk/BP1/g' | sed 's/R0/BP1/g' >  FR-ballot-vote.neo
+splitans -f neotex -F ansi -V FR-ballot-vote.neo > output.ans
+reset && cat output.ans && magick import -window $(xdotool getactivewindow) screenshot.png && magick screenshot.png -crop +0-348 -trim +repage FR-ballot-vote.png
 ```
 
-![ballot-vote](./ballot-vote.png)
+![FR](./FR-ballot-vote.png)
 
-source:
+## English
 
-- https://github.com/badele/money-as-protest/tree/main
+```bash
+ansi-compositor EN-ballot-vote.yaml | sed 's/Bk/BP1/g' | sed 's/R0/BP1/g' >  EN-ballot-vote.neo
+splitans -f neotex -F ansi -V EN-ballot-vote.neo > output.ans
+reset && cat output.ans && magick import -window $(xdotool getactivewindow) screenshot.png && magick screenshot.png -crop +0-348 -trim +repage EN-ballot-vote.png
+```
+
+![FR](./EN-ballot-vote.png)
