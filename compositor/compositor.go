@@ -117,36 +117,19 @@ func parseNeotexSGR(codes string) *splitans.SGR {
 	parts := strings.Split(codes, ",")
 	for _, code := range parts {
 		code = strings.TrimSpace(code)
-		if len(code) < 2 {
+		if code == "" {
 			continue
 		}
 
-		prefix := code[0]
-		colorChar := code[1]
-
-		var colorIndex uint8
-		var isBright bool
-
-		// Lowercase = standard colors (0-7), Uppercase = bright colors (8-15)
-		switch {
-		case colorChar >= 'k' && colorChar <= 'w':
-			colorIndex = uint8(colorChar - 'k')
-		case colorChar >= 'K' && colorChar <= 'W':
-			colorIndex = uint8(colorChar-'K') + 8
-			isBright = true
-		default:
+		isForeground, color, ok, err := splitans.ParseNeotexColorCode(code)
+		if !ok || err != nil {
 			continue
 		}
 
-		_ = isBright // Could be used for extended handling
-
-		switch prefix {
-		case 'F': // Foreground
-			sgr.FgColor.Type = splitans.ColorStandard
-			sgr.FgColor.Index = colorIndex
-		case 'B': // Background
-			sgr.BgColor.Type = splitans.ColorStandard
-			sgr.BgColor.Index = colorIndex
+		if isForeground {
+			sgr.FgColor = color
+		} else {
+			sgr.BgColor = color
 		}
 	}
 
