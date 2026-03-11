@@ -1,0 +1,31 @@
+term:
+  width: 80
+  height: 30
+  encoding: utf8
+
+defaults:
+  inputFormat: ansi
+  inputEncoding: utf8
+
+output:
+  format: neotex
+  keepTrailingLines: true
+
+layers:
+  - name: notebook
+    x: 1
+    y: 1
+    alignH: center
+    file: notebook.neo
+    inputFormat: neotex
+  - name: heart
+    x: 1
+    y: 5
+    alignH: center
+    file: heart.neo
+    inputFormat: neotex
+  - name: time
+    x: 1
+    y: 18
+    alignH: center
+    cmd: bit -color "#004AAD" -fit-scales -1,0,1,2  -fit-width 55 -fit-priority width -fit-limit 1 -font dogicabold "$(date +'%H:%M:%S')"
