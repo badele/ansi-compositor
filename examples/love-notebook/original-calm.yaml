@@ -24,7 +24,7 @@ layers:
     alignH: center
     file: heart.neo
     inputFormat: neotex
-  - name: heart
+  - name: calm
     x: 1
     y: 17
     alignH: center

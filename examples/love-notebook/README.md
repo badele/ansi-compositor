@@ -8,3 +8,11 @@ reset && \cat output.ans && magick import -window $(xdotool getactivewindow) scr
 ```
 
 ![original-calm](./original-calm.png)
+
+## Dynamic
+
+```bash
+while sleep 1 ; do x="$( ansi-compositor time-calm.yaml -F ansi 2>&1 )" ; clear ; echo "$x" ; done
+```
+
+![time-calm](./time-calm.gif)
