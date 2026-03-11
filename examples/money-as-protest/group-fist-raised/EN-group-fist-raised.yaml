@@ -1,0 +1,35 @@
+term:
+  width: 128
+  height: 120
+  encoding: utf8
+
+defaults:
+  inputFormat: ansi
+  inputEncoding: utf8
+
+output:
+  format: neotex
+  keepTrailingLines: true
+
+layers:
+  - name: poster
+    x: 1
+    y: 1
+    alignH: center
+    file: group-fist-raised.neo
+    inputFormat: neotex
+  - name: money
+    x: 1
+    y: 56
+    alignH: center
+    cmd: bit -color "#FFCC00" -fit-scales -1,0,1,2  -fit-width 113 -fit-priority width -fit-limit 1 -font boldpixels "MONEY"
+  - name: as
+    x: 1
+    y: 66
+    alignH: center
+    cmd: bit -color "#FFCC00" -fit-scales -1  -fit-width 113 -fit-priority width -fit-limit 1 -font boldpixels "AS"
+  - name: protest
+    x: 1
+    y: 74
+    alignH: center
+    cmd: bit -color "#FFCC00" -fit-scales -1,0,1,2  -fit-width 128 -fit-priority width -fit-limit 1 -font boldpixels "PROTEST"

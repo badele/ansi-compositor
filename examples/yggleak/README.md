@@ -2,8 +2,8 @@
 
 ```bash
 ansi-compositor yggleak.yaml > yggleak.neo
-splitans -f neotex -E cp437 -F ansi -S yggleak.neo > yggleak.ans
-ansilove -c 120 yggleak.ans && mv yggleak.ans.png yggleak.png
+splitans -f neotex -F ansi -V -K yggleak.neo > output.ans
+reset && \cat output.ans && magick import -window $(xdotool getactivewindow) screenshot.png && magick screenshot.png -crop +0-130 -trim +repage yggleak.png
 ```
 
 ![cron](./yggleak.ans.png)
