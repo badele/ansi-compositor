@@ -1,0 +1,32 @@
+term:
+  width: 80
+  height: 30
+  encoding: utf8
+
+defaults:
+  inputFormat: ansi
+  inputEncoding: utf8
+
+output:
+  format: neotex
+  keepTrailingLines: true
+
+layers:
+  - name: notebook
+    x: 1
+    y: 1
+    alignH: center
+    file: notebook.neo
+    inputFormat: neotex
+  - name: heart
+    x: 1
+    y: 5
+    alignH: center
+    file: heart.neo
+    inputFormat: neotex
+  - name: heart
+    x: 1
+    y: 17
+    alignH: center
+    file: calm.neo
+    inputFormat: neotex
